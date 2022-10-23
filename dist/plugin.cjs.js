@@ -60,21 +60,6 @@ CapacitorGoogleMaps.addListener('isMapInFocus', data => {
     CapacitorGoogleMaps.dispatchMapEvent({ id: data.mapId, focus: mapInFocus });
 });
 
-class MapCustomElement extends HTMLElement {
-    constructor() {
-        super();
-    }
-    connectedCallback() {
-        if (core.Capacitor.getPlatform() == 'ios') {
-            this.style.overflow = 'scroll';
-            this.style['-webkit-overflow-scrolling'] = 'touch';
-            const overflowDiv = document.createElement('div');
-            overflowDiv.style.height = '200%';
-            this.appendChild(overflowDiv);
-        }
-    }
-}
-customElements.define('capacitor-google-map', MapCustomElement);
 class GoogleMap {
     constructor(id) {
         this.element = null;
