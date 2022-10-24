@@ -155,7 +155,6 @@ export class CapacitorGoogleMapsWeb extends WebPlugin {
     }
     async addMarker(_args) {
         const markerOpts = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
-        console.log(markerOpts);
         const marker = new google.maps.Marker(markerOpts);
         const id = '' + this.currMarkerId;
         this.maps[_args.id].markers[id] = marker;
