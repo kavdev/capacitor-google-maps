@@ -82,7 +82,7 @@ class GoogleMap {
         }
         newMap.element = options.element;
         newMap.element.dataset.internalId = options.id;
-        const elementBounds = options.element.getBoundingClientRect();
+        const elementBounds = await GoogleMap.getElementBounds(options.element);
         options.config.width = elementBounds.width;
         options.config.height = elementBounds.height;
         options.config.x = elementBounds.x;
@@ -104,6 +104,30 @@ class GoogleMap {
             });
         }
         return newMap;
+    }
+    static async getElementBounds(element) {
+        return new Promise(resolve => {
+            let elementBounds = element.getBoundingClientRect();
+            if (elementBounds.width == 0) {
+                let retries = 0;
+                const boundsInterval = setInterval(function () {
+                    if (elementBounds.width == 0 && retries < 30) {
+                        elementBounds = element.getBoundingClientRect();
+                        retries++;
+                    }
+                    else {
+                        if (retries == 30) {
+                            console.warn('Map size could not be determined');
+                        }
+                        clearInterval(boundsInterval);
+                        resolve(elementBounds);
+                    }
+                }, 100);
+            }
+            else {
+                resolve(elementBounds);
+            }
+        });
     }
     /**
      * Enable marker clustering
@@ -337,16 +361,16 @@ class GoogleMap {
       if (!this.element) {
         return null;
       }
-  
+
       let parentElement = this.element.parentElement;
       while (parentElement !== null) {
         if (window.getComputedStyle(parentElement).overflowY !== 'hidden') {
           return parentElement;
         }
-  
+
         parentElement = parentElement.parentElement;
       }
-  
+
       return null;
     }
     */
@@ -786,7 +810,6 @@ class CapacitorGoogleMapsWeb extends core.WebPlugin {
     }
     async addMarker(_args) {
         const markerOpts = this.buildMarkerOpts(_args.marker, this.maps[_args.id].map);
-        console.log(markerOpts);
         const marker = new google.maps.Marker(markerOpts);
         const id = '' + this.currMarkerId;
         this.maps[_args.id].markers[id] = marker;

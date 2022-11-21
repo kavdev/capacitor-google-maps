@@ -54,6 +54,7 @@ export declare class GoogleMap {
      * @returns GoogleMap
      */
     static create(options: CreateMapArgs, callback?: MapListenerCallback<MapReadyCallbackData>): Promise<GoogleMap>;
+    private static getElementBounds;
     /**
      * Enable marker clustering
      *
